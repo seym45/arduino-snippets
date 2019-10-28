@@ -1,5 +1,6 @@
 #include <SD.h>
 #include <SPI.h>
+#include <math.h>
 File sdcard_file;
 int CS_pin = 53;
 
@@ -34,23 +35,22 @@ boolean ledPin_state;
 
 void setup()
 {
-  Serial.begin(9600);      //Setting baudrate at 9600
-  pinMode(CS_pin, OUTPUT); //declaring CS pin as output pin
-  if (SD.begin())
-  {
-    Serial.println("SD card is initialized and it is ready to use");
-  }
-  else
-  {
-    Serial.println("SD card is not initialized");
-    cPrint("Starting...");
-    delay(1000);
-    return;
-  }
 
   // Display
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   cPrint("Starting...");
+  Serial.begin(9600); //Setting baudrate at 9600
+
+  // pinMode(CS_pin, OUTPUT); //declaring CS pin as output pin
+  // if (SD.begin())
+  // {
+  //   Serial.println("SD card is initialized and it is ready to use");
+  // }
+  // else
+  // {
+  //   Serial.println("SD card is not initialized");
+  //   return;
+  // }
 
   // GPS
   Serial3.begin(9600);
@@ -66,10 +66,26 @@ void setup()
 bool reset = false;
 void loop()
 {
+
   //  gpsTest();
   // menu();
-  moon();
-  delay(12000);
+  // moon();
+
+  double ty = 23.810886;
+  double tx = 90.401562;
+  double cy = 23.778311;
+  double cx =90.396063;
+
+
+  double dy = ty - cy;
+  double dx = tx - cx;
+  double direction = atan2(dy, dx);
+  double distance = distanceInKm(ty, tx, cy, cx);
+  Serial.println(distance);
+  Serial.println(direction);
+  drawDir(distance, direction);
+  
+  delay(1000000);
 }
 
 void menu()
