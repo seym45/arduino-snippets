@@ -12,6 +12,8 @@ Adafruit_SSD1306 display(OLED_RESET);
 
 #include <TinyGPS.h>
 TinyGPS gps;
+double gLat, gLon; // global vars
+double lastLat, lastLon; // last known location
 
 #include <Keypad.h>
 
@@ -41,16 +43,16 @@ void setup()
   cPrint("Starting...");
   Serial.begin(9600); //Setting baudrate at 9600
 
-  // pinMode(CS_pin, OUTPUT); //declaring CS pin as output pin
-  // if (SD.begin())
-  // {
-  //   Serial.println("SD card is initialized and it is ready to use");
-  // }
-  // else
-  // {
-  //   Serial.println("SD card is not initialized");
-  //   return;
-  // }
+  pinMode(CS_pin, OUTPUT); //declaring CS pin as output pin
+  if (SD.begin())
+  {
+    Serial.println("SD OK");
+  }
+  else
+  {
+    Serial.println("SD FAILED");
+    return;
+  }
 
   // GPS
   Serial3.begin(9600);
@@ -60,42 +62,52 @@ void setup()
   digitalWrite(ledPin, HIGH);      // Turn the LED on.
   k.addEventListener(keypadEvent); // Add an event listener for this keypad
 
-  cPrint("Press *");
+  // cPrint("Press *");
 }
 
-bool reset = false;
+bool reset = true;
 void loop()
 {
 
   //  gpsTest();
   // menu();
   // moon();
-
-  double ty = 23.810886;
-  double tx = 90.401562;
-  double cy = 23.778311;
-  double cx =90.396063;
-
-
-  double dy = ty - cy;
-  double dx = tx - cx;
-  double direction = atan2(dy, dx);
-  double distance = distanceInKm(ty, tx, cy, cx);
-  Serial.println(distance);
-  Serial.println(direction);
-  drawDir(distance, direction);
-  
-  delay(1000000);
-}
-
-void menu()
-{
   char key = k.getKey();
 
   if (key)
   {
     Serial.println(key);
   }
+  if (blink)
+  {
+    digitalWrite(ledPin, !digitalRead(ledPin)); // Change the ledPin from Hi2Lo or Lo2Hi.
+    delay(100);
+  }
+
+  if (reset)
+  {
+    reset = false;
+    dMenu();
+    switch (getMenuOption())
+    {
+    case '1':
+      moon();
+      break;
+    case '2':
+      distance();
+      break;
+    case '3':
+      direction();
+      break;
+    default:
+      reset = true; // open main menu again
+      break;
+    }
+  }
+}
+
+void menu()
+{
   if (blink)
   {
     digitalWrite(ledPin, !digitalRead(ledPin)); // Change the ledPin from Hi2Lo or Lo2Hi.
