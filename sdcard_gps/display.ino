@@ -25,8 +25,6 @@ void dMenu()
 
 /* Direction from point*/
 
-
-
 /* Moon set rise time*/
 void beginMoon()
 {
@@ -65,7 +63,6 @@ void finalMoon(String in)
   display.display();
 }
 
-/* Moon set rise time*/
 void beginDir()
 {
   display.clearDisplay();
@@ -123,5 +120,46 @@ void drawLineAndDistance(double length, double angle, int fromX, int fromY, int 
   // 127 - 15 = 112
   // 31  - 15 = 16
   display.drawLine(96 + fromX * 2, 16 - fromY, 96 + toX * 2, 16 - toY, WHITE);
+  display.display();
+}
+
+void startDistanceDisplay()
+{
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.println("Press A \nto start");
+  display.display();
+}
+
+void updateDistanceDisplay(double time)
+{
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.println(String(avgLat, 6) + "," + String(avgLon, 6) + "\n");
+  display.setCursor(0, 10);
+  display.println("T Dis:" + String(totalDistance, 3) + " KM");
+  display.setCursor(0, 20);
+  display.println("T Time:" + String(time, 1) + " m");
+
+  display.display();
+}
+
+
+void finishDistance(double time)
+{
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.println("Finished \n");
+  display.setCursor(0, 10);
+  display.println("T Dis:" + String(totalDistance, 3) + " KM");
+  display.setCursor(0, 20);
+  display.println("T Time:" + String(time, 1) + " m");
+
   display.display();
 }

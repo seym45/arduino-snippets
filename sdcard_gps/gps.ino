@@ -64,7 +64,14 @@ double rad2deg(double rad)
   return (rad * 180.0 / PI);
 }
 
-#ifdef DEBUG
+#ifdef DEBUG_DIRECTION
+#define N 9
+int lata[N] = {5, 10, 10, 10, 5, 0, 0, 0, 5};
+int lona[N] = {5, 0, 5, 10, 10, 10, 5, 0, 0};
+int ia = 0;
+#endif
+
+#ifdef DEBUG_DISTANCE
 #define N 9
 int lata[N] = {5, 10, 10, 10, 5, 0, 0, 0, 5};
 int lona[N] = {5, 0, 5, 10, 10, 10, 5, 0, 0};
@@ -107,11 +114,11 @@ void gpsLocationUpdate()
   }
   else
   {
-    gLat = 5;
-    gLon = 5;
+    gLat = 0;
+    gLon = 0;
   }
 
-#ifdef DEBUG
+#if defined(DEBUG_DIRECTION) || defined(DEBUG_DISTANCE)
   gLat = lata[ia];
   gLon = lona[ia];
   ia++;
