@@ -9,6 +9,8 @@ void distance()
     }
     double minutesElapsed = 0;
     unsigned startTime = millis();
+    totalDistance = 0;
+
     Serial.println("Start time " + String(startTime));
     updateDistanceDisplay(0);
 
@@ -18,9 +20,8 @@ void distance()
         Serial.println("running sdistance() loop");
 
         // if distance = 0 break
-        if (k.getKey()) // press any key to get back
+        if (reset) // press any key to get back
         {
-            reset = true;
             Serial.println("Returning from distance() loop");
             break;
         }
@@ -28,10 +29,8 @@ void distance()
         minutesElapsed = (millis() - startTime) / (1000 * 60.0);
         updateDistanceDisplay(minutesElapsed);
     }
-    minutesElapsed = (millis() - startTime) / (1000 * 60.0);
+    minutesElapsed = abs(millis() - startTime) / (1000 * 60.0);
     finishDistance(minutesElapsed);
-    totalDistance = 0;
-
     bGetKey(); // wait to return
 }
 
@@ -46,6 +45,9 @@ void updateAndCalcTotalDistance()
         sumLat += gLat;
         sumLon += gLon;
         millisDelay(AVG_POINT_CALC_DELAY);
+        char key = k.getKey();
+        if (reset)
+            return;
     }
     avgLat = sumLat / (1.0 * N_LOCATION_POINTS);
     avgLon = sumLon / (1.0 * N_LOCATION_POINTS);

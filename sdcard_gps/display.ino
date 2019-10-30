@@ -143,7 +143,7 @@ void updateDistanceDisplay(double time)
   display.setCursor(0, 10);
   display.println("T Dis:" + String(totalDistance, 3) + " KM");
   display.setCursor(0, 20);
-  display.println("T Time:" + String(time, 1) + " m");
+  // display.println("T Time:" + String(time, 1) + " m");
 
   display.display();
 }
@@ -151,15 +151,16 @@ void updateDistanceDisplay(double time)
 
 void finishDistance(double time)
 {
+  double d = totalDistance;
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0, 0);
   display.println("Finished \n");
   display.setCursor(0, 10);
-  display.println("T Dis:" + String(totalDistance, 3) + " KM");
+  display.println("T Dis:" + String(d, 3) + " KM");
   display.setCursor(0, 20);
-  display.println("T Time:" + String(time, 1) + " m");
+  // display.println("T Time:" + String(time, 1) + " m");
 
   display.display();
 }

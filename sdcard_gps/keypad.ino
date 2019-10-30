@@ -62,7 +62,7 @@ double getLatLon(bool lat)
       deciaml++;
       Serial.println("Deciaml " + String(deciaml));
     }
-    else if (key == 'C') // clear 
+    else if (key == 'C') // clear
     {
       deciaml = 0;
       num = 0;
