@@ -2,7 +2,7 @@
 #define THRESH 600
 
 //mode
-volatile bool mode = 1;
+volatile bool mode = 0; // 1 - Manual 0 - Auto
 bool prevMode = 1;
 #define modeButton 3
 
@@ -53,7 +53,7 @@ void setup()
 
   attachInterrupt(digitalPinToInterrupt(controlButton), controlFn, FALLING);
   attachInterrupt(digitalPinToInterrupt(modeButton), modeFn, FALLING);
-  millisDelay(200);
+  millisDelay(1000);
 }
 
 float temp()
@@ -71,7 +71,87 @@ int stopWatchMode = 2;
 boolean displayed2 = false;
 boolean displayed1 = false;
 
-void loop()
+void loop() {
+
+  //    Serial.println(analogRead(1));
+  //  unsigned t = millis();
+  getSoundLevel();
+  //  Serial.println(getSoundLevel());
+  //  Serial.println(millis() - t);
+
+}
+
+
+void level_() {
+  unsigned long startMillis = millis(); // Start of sample window
+  unsigned int peakToPeak = 0;   // peak-to-peak level
+
+  unsigned int signalMax = 0;
+  unsigned int signalMin = 1024;
+
+  // collect data for 50 mS
+  while (millis() - startMillis < sampleWindow)
+  {
+    sample = analogRead(0);
+    if (sample < 1024)  // toss out spurious readings
+    {
+      if (sample > signalMax)
+      {
+        signalMax = sample;  // save just the max levels
+      }
+      else if (sample < signalMin)
+      {
+        signalMin = sample;  // save just the min levels
+      }
+    }
+  }
+  peakToPeak = signalMax - signalMin;  // max - min = peak-peak amplitude
+  return peakToPeak
+}
+
+int lastLevel = 0;
+#define N 10
+short a[N];
+int getSoundLevel() {
+
+  for (int i = 0; i < 100; i++) {
+    a[0] = 0;
+  }
+
+  short ll = 0;
+  unsigned diff = 0;
+  unsigned mx = 0;
+  unsigned long mn = 5000;
+  unsigned long sum;
+  for (int i = 0; i < 100; i++) {
+    ll = analogRead(1);
+
+    sum = ll / 100;
+    for (int k = 0; k < N; k++) {
+      a[k] = a[k + 1];
+      sum += (unsigned long)(a[k] / N);
+    }
+    a[N - 1] = ll;
+    Serial.println(sum);
+    if (sum > mx)mx = sum;
+    else if (sum < mn)mn = sum;
+    //    diff = abs(level - lastLevel);
+    //    lastLevel = level;
+    //        Serial.print(i);
+    //    Serial.print('\t');
+    //    Serial.print(level);
+    //    Serial.print('\t');
+    //    Serial.print(mn);
+    //    Serial.print('\t');
+    //    Serial.println(mx);
+    //    delay(100);
+  }
+  diff = abs(mx - mn);
+  diff = diff  < 100 ? diff : 0;
+  return abs(mx - mn);
+}
+
+void loop_()
 {
   // Read control button
   //  controlFn();
@@ -227,40 +307,37 @@ void display_failure()
 
 void auto_() {
 
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 4);
+  display.println("Sensing Sound\n Auto Mode");
+  display.display();
+
   int soundLevel;
   while (true) {
     airTime = millis() - startTime;
     if (airTime > 15000) { // 15 sec or 5KM around
+      Serial.println("(airTime > 15000");
       display_failure();
       millisDelay(5000);
       break;
     }
 
     soundLevel = getSoundLevel();
+    Serial.println(soundLevel);
+
     if (soundLevel > THRESH) {
+      Serial.println("Level > Thresh");
       break;
     }
   }
 
-  // push to end
+  // Display to start screen
   stopWatchMode = 2;
 }
 
 
-int getSoundLevel() {
-
-  int level = 0;
-  int lastLevel = 0;
-  int diff = 0;
-  int mx = 0;
-  for (int i = 0; i < 100; i++) {
-    level = analogRead(1);
-    diff = abs(level - lastLevel);
-    if (diff > mx)mx = diff;
-  }
-  return mx;
-
-}
 
 static unsigned long mode_last_interrupt_time = 0;
 

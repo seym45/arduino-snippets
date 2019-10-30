@@ -1,3 +1,6 @@
+#define UPDATE_DIRECTION_INTERAL 1000
+#define DEBUG
+
 #include <SD.h>
 #include <SPI.h>
 #include <math.h>
@@ -12,7 +15,7 @@ Adafruit_SSD1306 display(OLED_RESET);
 
 #include <TinyGPS.h>
 TinyGPS gps;
-double gLat, gLon; // global vars
+double gLat, gLon;       // global vars
 double lastLat, lastLon; // last known location
 
 #include <Keypad.h>

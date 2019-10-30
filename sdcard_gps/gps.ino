@@ -64,7 +64,12 @@ double rad2deg(double rad)
   return (rad * 180.0 / PI);
 }
 
-
+#ifdef DEBUG
+#define N 9
+int lata[N] = {5, 10, 10, 10, 5, 0, 0, 0, 5};
+int lona[N] = {5, 0, 5, 10, 10, 10, 5, 0, 0};
+int ia = 0;
+#endif
 
 void gpsLocationUpdate()
 {
@@ -76,7 +81,7 @@ void gpsLocationUpdate()
     while (Serial3.available())
     {
       char c = Serial3.read();
-      Serial.write(c);   // uncomment this line if you want to see the GPS data flowing
+      // Serial.write(c);   // uncomment this line if you want to see the GPS data flowing
       if (gps.encode(c)) // Did a new valid sentence come in?
         newData = true;
     }
@@ -105,6 +110,14 @@ void gpsLocationUpdate()
     gLat = 5;
     gLon = 5;
   }
+
+#ifdef DEBUG
+  gLat = lata[ia];
+  gLon = lona[ia];
+  ia++;
+  if (ia == N)
+    ia = 0;
+#endif
 
   Serial.print("Lat: ");
   Serial.print(gLat);
