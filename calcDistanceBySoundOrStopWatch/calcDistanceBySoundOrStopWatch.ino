@@ -1,5 +1,5 @@
 //SOund max diff
-#define THRESH 600
+#define THRESH 900
 
 //mode
 volatile bool mode = 0; // 1 - Manual 0 - Auto
@@ -67,91 +67,10 @@ float temp()
 // 2 = reset, display to start
 int stopWatchMode = 2;
 
-
 boolean displayed2 = false;
 boolean displayed1 = false;
 
-void loop() {
-
-  //    Serial.println(analogRead(1));
-  //  unsigned t = millis();
-  getSoundLevel();
-  //  Serial.println(getSoundLevel());
-  //  Serial.println(millis() - t);
-
-}
-
-
-void level_() {
-  unsigned long startMillis = millis(); // Start of sample window
-  unsigned int peakToPeak = 0;   // peak-to-peak level
-
-  unsigned int signalMax = 0;
-  unsigned int signalMin = 1024;
-
-  // collect data for 50 mS
-  while (millis() - startMillis < sampleWindow)
-  {
-    sample = analogRead(0);
-    if (sample < 1024)  // toss out spurious readings
-    {
-      if (sample > signalMax)
-      {
-        signalMax = sample;  // save just the max levels
-      }
-      else if (sample < signalMin)
-      {
-        signalMin = sample;  // save just the min levels
-      }
-    }
-  }
-  peakToPeak = signalMax - signalMin;  // max - min = peak-peak amplitude
-  return peakToPeak
-}
-
-int lastLevel = 0;
-#define N 10
-short a[N];
-int getSoundLevel() {
-
-  for (int i = 0; i < 100; i++) {
-    a[0] = 0;
-  }
-
-  short ll = 0;
-  unsigned diff = 0;
-  unsigned mx = 0;
-  unsigned long mn = 5000;
-  unsigned long sum;
-  for (int i = 0; i < 100; i++) {
-    ll = analogRead(1);
-
-    sum = ll / 100;
-    for (int k = 0; k < N; k++) {
-      a[k] = a[k + 1];
-      sum += (unsigned long)(a[k] / N);
-    }
-    a[N - 1] = ll;
-    Serial.println(sum);
-    if (sum > mx)mx = sum;
-    else if (sum < mn)mn = sum;
-    //    diff = abs(level - lastLevel);
-    //    lastLevel = level;
-    //        Serial.print(i);
-    //    Serial.print('\t');
-    //    Serial.print(level);
-    //    Serial.print('\t');
-    //    Serial.print(mn);
-    //    Serial.print('\t');
-    //    Serial.println(mx);
-    //    delay(100);
-  }
-  diff = abs(mx - mn);
-  diff = diff  < 100 ? diff : 0;
-  return abs(mx - mn);
-}
-
-void loop_()
+void loop()
 {
   // Read control button
   //  controlFn();
@@ -164,7 +83,8 @@ void loop_()
     stopWatchMode = stopWatchMode % 3;
   }
 
-  if (mode != prevMode) {
+  if (mode != prevMode)
+  {
     Serial.println(mode);
     prevMode = mode;
     stopWatchMode = 2;
@@ -174,23 +94,25 @@ void loop_()
 
   switch (stopWatchMode)
   {
-    case 0:
-      start_();
-      displayed1 = false;
-      displayed2 = false;
-      break;
-    case 1:
-      if (!displayed1)end_();
-      displayed1 = true;
-      displayed2 = false;
-      break;
-    case 2:
-      if (!displayed2)display_();
-      displayed1 = false;
-      displayed2 = true;
-      break;
-    default:
-      break;
+  case 0:
+    start_();
+    displayed1 = false;
+    displayed2 = false;
+    break;
+  case 1:
+    if (!displayed1)
+      end_();
+    displayed1 = true;
+    displayed2 = false;
+    break;
+  case 2:
+    if (!displayed2)
+      display_();
+    displayed1 = false;
+    displayed2 = true;
+    break;
+  default:
+    break;
   }
 
   //  Serial.println(stopWatchMode);
@@ -201,13 +123,54 @@ void loop_()
 //  delay(100);
 //}
 
+#define MIC 3
+// void loop()
+// {
+
+//   Serial.println(level_());
+//   //  unsigned t = millis();
+//   // getSoundLevel();
+//   //  Serial.println(getSoundLevel());
+//   //  Serial.println(millis() - t);
+// }
+
+int sampleWindow = 50;
+int sample;
+unsigned int level_()
+{
+  unsigned long startMillis = millis(); // Start of sample window
+  unsigned int peakToPeak = 0;          // peak-to-peak level
+
+  unsigned int signalMax = 0;
+  unsigned int signalMin = 1024;
+
+  // collect data for 50 mS
+  while (millis() - startMillis < sampleWindow)
+  {
+    sample = analogRead(MIC);
+    if (sample < 1024) // toss out spurious readings
+    {
+      if (sample > signalMax)
+      {
+        signalMax = sample; // save just the max levels
+      }
+      else if (sample < signalMin)
+      {
+        signalMin = sample; // save just the min levels
+      }
+    }
+  }
+  peakToPeak = abs(signalMax - signalMin); // max - min = peak-peak amplitude
+  return peakToPeak;
+}
+
 unsigned long startTime;
 unsigned long airTime;
 boolean beginTimer = false;
 
 void end_()
 {
-  airTime = millis() - startTime ;
+  airTime = millis() - startTime;
   float soundVelocity = 333.3 + 0.6 * (temp() - 10);
   float totalDisplacement = soundVelocity * ((airTime + .1) / 1000.0);
   display.clearDisplay();
@@ -236,7 +199,8 @@ void start_()
     startTime = millis();
     beginTimer = true; // made true in end_() function
     // Try Auto Mode
-    if (mode == 0) {
+    if (mode == 0)
+    {
       auto_();
     }
   }
@@ -305,7 +269,8 @@ void display_failure()
   millisDelay(10);
 }
 
-void auto_() {
+void auto_()
+{
 
   display.clearDisplay();
   display.setTextSize(1);
@@ -314,22 +279,27 @@ void auto_() {
   display.println("Sensing Sound\n Auto Mode");
   display.display();
 
-  int soundLevel;
-  while (true) {
+  unsigned int soundLevel;
+  while (true)
+  {
     airTime = millis() - startTime;
-    if (airTime > 15000) { // 15 sec or 5KM around
+    if (airTime > 15000)
+    { // 15 sec or 5KM around
       Serial.println("(airTime > 15000");
       display_failure();
       millisDelay(5000);
+
       break;
     }
 
-    soundLevel = getSoundLevel();
-    Serial.println(soundLevel);
+    soundLevel = level_();
+    // Serial.println(soundLevel);
 
-    if (soundLevel > THRESH) {
+    if (soundLevel > THRESH)
+    {
       Serial.println("Level > Thresh");
-      break;
+      stopWatchMode = 1; // end successfully
+      return;
     }
   }
 
@@ -337,11 +307,10 @@ void auto_() {
   stopWatchMode = 2;
 }
 
-
-
 static unsigned long mode_last_interrupt_time = 0;
 
-void modeFn() {
+void modeFn()
+{
   unsigned long mode_interrupt_time = millis();
   //  Serial.println(mode_last_interrupt_time, mode_interrupt_time);
   // If interrupts come faster than 200ms, assume it's a bounce and ignore
@@ -349,7 +318,6 @@ void modeFn() {
   {
     mode = !mode;
     Serial.println("Dispalyed Mode");
-
   }
   mode_last_interrupt_time = mode_interrupt_time;
 }
@@ -357,7 +325,8 @@ void modeFn() {
 //}
 
 static unsigned long last_interrupt_time = 0;
-void controlFn() {
+void controlFn()
+{
   int reading = digitalRead(controlButton);
   unsigned long interrupt_time = millis();
   // If interrupts come faster than 200ms, assume it's a bounce and ignore
