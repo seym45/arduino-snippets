@@ -32,6 +32,7 @@ void distance()
     minutesElapsed = abs(millis() - startTime) / (1000 * 60.0);
     finishDistance(minutesElapsed);
     bGetKey(); // wait to return
+    reset = true;
 }
 
 void updateAndCalcTotalDistance()

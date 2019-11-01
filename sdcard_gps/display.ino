@@ -19,7 +19,7 @@ void dMenu()
   display.setTextColor(WHITE);
   display.setCursor(0, 0);
 
-  display.println("1. Moon\n2. Distance \n3. Direction");
+  display.println("1. Moon\n2. Distance \n3. Direction\n4. GPS test");
   display.display();
 }
 
@@ -141,7 +141,7 @@ void updateDistanceDisplay(double time)
   display.setCursor(0, 0);
   display.println(String(avgLat, 6) + "," + String(avgLon, 6) + "\n");
   display.setCursor(0, 10);
-  display.println("T Dis:" + String(totalDistance, 3) + " KM");
+  display.println("T Dis:" + String(totalDistance, 3) + " M");
   display.setCursor(0, 20);
   // display.println("T Time:" + String(time, 1) + " m");
 
@@ -158,9 +158,28 @@ void finishDistance(double time)
   display.setCursor(0, 0);
   display.println("Finished \n");
   display.setCursor(0, 10);
-  display.println("T Dis:" + String(d, 3) + " KM");
+  display.println("T Dis:" + String(d, 3) + " m");
   display.setCursor(0, 20);
   // display.println("T Time:" + String(time, 1) + " m");
+
+  display.display();
+}
+
+
+
+
+void testDisplayGPS(int secsElapsed)
+{
+  double d = totalDistance;
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0, 0);
+  display.println(String(gLat,6));
+  display.setCursor(0, 10);
+  display.println(String(gLon,6));
+  display.setCursor(0, 20);
+  display.println("T Time:" + String(secsElapsed) + " s");
 
   display.display();
 }

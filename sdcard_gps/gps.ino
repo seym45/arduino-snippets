@@ -11,7 +11,7 @@ void gpsTest()
     while (Serial3.available())
     {
       char c = Serial3.read();
-      //       Serial.write(c); // uncomment this line if you want to see the GPS data flowing
+            Serial.write(c); // uncomment this line if you want to see the GPS data flowing
       if (gps.encode(c)) // Did a new valid sentence come in?
         newData = true;
     }
@@ -119,6 +119,7 @@ void gpsLocationUpdate()
   }
 
 #if defined(DEBUG_DIRECTION) || defined(DEBUG_DISTANCE)
+  Serial.println("DEBUG");
   gLat = lata[ia];
   gLon = lona[ia];
   ia++;
@@ -131,4 +132,35 @@ void gpsLocationUpdate()
   Serial.print(" Lon: ");
   Serial.print(gLon);
   Serial.println();
+}
+
+void gpsTestWithDisplay()
+{
+
+  unsigned int startTime_ = millis();
+
+  // view gps data
+  while (true)
+  {
+    /* code */
+
+    char key = k.getKey();
+
+    if (key)
+    {
+      Serial.println("Completed GPS test");
+      break;
+    }
+    gpsLocationUpdate();
+    unsigned int secsElapsed = abs(millis() - startTime_) / (1000);
+    if(secsElapsed > 10){
+      Serial.println("yol");
+      break;
+    }
+    Serial.println("sec elapsed: ");
+    Serial.println(secsElapsed);
+    testDisplayGPS(secsElapsed);
+    millisDelay(1000);
+  }
+  reset = true;
 }

@@ -2,5 +2,8 @@ void moon()
 {
   beginMoon();
   String ymd = getymd();
-  finalMoon(fileContents(makeFileName(ymd)));
+  String r = fileContents(makeFileName(ymd));
+  finalMoon(r);
+  bGetKey();
+  reset = true;
 }

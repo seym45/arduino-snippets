@@ -1,7 +1,7 @@
 #define UPDATE_DIRECTION_INTERAL 1000
 #define AVG_POINT_CALC_DELAY 100
 
-#define DEBUG_DISTANCE // ENABLE to test 'direction' option with hardcoded value
+// #define DEBUG_DISTANCE // ENABLE to test 'direction' option with hardcoded value
 // #define DEBUG_DIRECTION // ENABLE to test 'direction' option with hardcoded value
 
 #include <SD.h>
@@ -18,11 +18,10 @@ Adafruit_SSD1306 display(OLED_RESET);
 
 #include <TinyGPS.h>
 TinyGPS gps;
-double gLat, gLon;        // global current location
-double lastLat, lastLon;  // last known location
-double avgLat, avgLon;    // last valid avg location
+double gLat, gLon;       // global current location
+double lastLat, lastLon; // last known location
+double avgLat, avgLon;   // last valid avg location
 double totalDistance = 0;
-
 
 #include <Keypad.h>
 
@@ -74,6 +73,12 @@ void setup()
   // cPrint("Press *");
 }
 
+// void loop()
+// {
+//   gpsTest();
+//   millisDelay(1000);
+// }
+
 bool reset = true;
 void loop()
 {
@@ -107,6 +112,9 @@ void loop()
       break;
     case '3':
       direction();
+      break;
+    case '4':
+      gpsTestWithDisplay();
       break;
     default:
       reset = true; // open main menu again

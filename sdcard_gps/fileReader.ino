@@ -3,8 +3,10 @@ String makeFileName(String ymd)
   String y = ymd.substring(0, 4);
   String m = ymd.substring(4, 6);
   String d = ymd.substring(6, 8);
-  Serial.println("Filename: " + y + "//" + m + "//" + d + ".csv");
-  return y + "//" + m + "//" + d + ".csv";
+
+  String filename = y + "/" + m + "/" + d + ".csv";
+  Serial.println("Filename: " + filename);
+  return filename;
 }
 
 String fileContents(String name)
@@ -18,7 +20,7 @@ String fileContents(String name)
     int currentLine = 0;
     if (sdcard_file.available())
     {
-      buffer = sdcard_file.readStringUntil('\n');
+      buffer = sdcard_file.readStringUntil(';');
       Serial.println("Contents: " + buffer); //Printing for debugging purpose
     }
     sdcard_file.close();
@@ -81,3 +83,23 @@ String fileContentsByLine(String name, int line)
 //  Serial.println("SD card is not initialized3333334");
 //
 //  Serial.println(fileContentsByLine("2019/10.csv", 4));
+
+/*
+20210503
+20241208
+20350101
+20360305
+20360913
+20450721
+20460129
+20460726
+20460809
+20461105
+20470104
+20501106
+20540429
+20630929
+20670802
+20710223
+20710323
+*/
